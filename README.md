@@ -28,14 +28,12 @@ npm install
 npm run dev
 ```
 
-The API listens on http://localhost:8080 and the app on http://localhost:5173.
-
-The Vite dev server proxies `/api/*` to the backend and strips the `/api` prefix, so the frontend
-can call the API without any CORS configuration. Use it as an end-to-end smoke test once both
-sides are running:
+The API listens on http://localhost:8080 and the app on http://localhost:5173. The backend allows
+the dev server's origin via CORS, so the frontend calls the API directly. Use this as an
+end-to-end smoke test once both sides are running:
 
 ```bash
-curl http://localhost:5173/api/health
+curl http://localhost:8080/health
 # {"status":"ok"}
 ```
 

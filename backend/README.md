@@ -17,6 +17,9 @@ and make sure you see the "Server running OK" message.
 - `GET /health` — pings the database and returns `{"status":"ok"}`, or a 503 with
   `{"status":"unavailable"}` when the database cannot be reached
 
+The server sends CORS headers for `CORS_ORIGIN` (the frontend dev server by default), so the
+frontend can call these endpoints directly from the browser.
+
 ## Configuration
 
 The server reads its database connection from the environment. Defaults in brackets apply when
@@ -29,6 +32,7 @@ running outside Docker:
 | `DB_USER` | `postgres` |
 | `DB_PASSWORD` | `postgres` |
 | `DB_NAME` | `main_db` |
+| `CORS_ORIGIN` | `http://localhost:5173` |
 
 The server exits on startup if the database is unreachable. Both services use
 `restart: unless-stopped`, so the backend retries by itself if it happens to win the race on a
