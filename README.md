@@ -4,3 +4,39 @@ The repository contains a starting point for the coding excercise given to you b
 
 - A backend repository running a golang application (with postgres and air for hot reloading) in `/backend`
 - A frontend repository running React with Typescript (with Vite as the development server) in `/frontend`
+
+## Prerequisites
+
+- Docker with Compose — runs the backend and the database
+- Node.js 22.13+ (20.19+ and 24+ also work) — runs the frontend
+- Go 1.27 — only needed if you want to run the backend outside Docker
+
+## Getting started
+
+Start the database and the API:
+
+```bash
+cd backend
+docker compose up
+```
+
+Then, in a second terminal, start the frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The API listens on http://localhost:8080 and the app on http://localhost:5173.
+
+The Vite dev server proxies `/api/*` to the backend and strips the `/api` prefix, so the frontend
+can call the API without any CORS configuration. Use it as an end-to-end smoke test once both
+sides are running:
+
+```bash
+curl http://localhost:5173/api/health
+# {"status":"ok"}
+```
+
+See `backend/README.md` and `frontend/README.md` for details on each side.

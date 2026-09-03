@@ -6,3 +6,4 @@
 # Backend
 .DS_Store
 /backend/tmp
+/backend/backend
