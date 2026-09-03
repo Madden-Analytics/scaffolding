@@ -68,7 +68,7 @@ func main() {
 	}
 }
 
-// env returns the value of the environment variable, or fallback when it is unset.
+// env returns the value of the environment variable, or fallback when it is unset or empty.
 func env(key, fallback string) string {
 	if value := os.Getenv(key); value != "" {
 		return value

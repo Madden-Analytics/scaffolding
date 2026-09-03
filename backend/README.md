@@ -18,7 +18,8 @@ and make sure you see the "Server running OK" message.
   `{"status":"unavailable"}` when the database cannot be reached
 
 The server sends CORS headers for `CORS_ORIGIN` (the frontend dev server by default), so the
-frontend can call these endpoints directly from the browser.
+frontend can call these endpoints directly from the browser. `CORS_ORIGIN` is a single origin,
+written exactly as the browser sends it — scheme, host and port, with no trailing slash.
 
 ## Configuration
 
@@ -34,9 +35,9 @@ running outside Docker:
 | `DB_NAME` | `main_db` |
 | `CORS_ORIGIN` | `http://localhost:5173` |
 
-The server exits on startup if the database is unreachable. Both services use
-`restart: unless-stopped`, so the backend retries by itself if it happens to win the race on a
-cold start.
+The server exits on startup if the database is unreachable. Under Compose it waits for the
+database's healthcheck before it starts, so a cold start is not a race. Started on its own against
+a database that is not up yet, it exits and stays down until you start it again.
 
 ## Database data
 

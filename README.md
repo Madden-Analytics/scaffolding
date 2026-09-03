@@ -8,7 +8,7 @@ The repository contains a starting point for the coding excercise given to you b
 ## Prerequisites
 
 - Docker with Compose — runs the backend and the database
-- Node.js 22.13+ (20.19+ and 24+ also work) — runs the frontend
+- Node.js 22.12+ (20.19+ also works) — runs the frontend
 - Go 1.27 — only needed if you want to run the backend outside Docker
 
 ## Getting started
