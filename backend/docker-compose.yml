@@ -9,19 +9,26 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: main_db
     volumes:
-      # Postgres 18 moved the data directory under /var/lib/postgresql/<major>/docker,
-      # so the volume has to be mounted one level up from the pre-18 location.
-      - postgres_data:/var/lib/postgresql
+      # Postgres 18 moved the data directory to /var/lib/postgresql/18/docker,
+      # so the volume is mounted one level up from the pre-18 location. The
+      # volume is named per major version: a cluster created by an older image
+      # is not readable here, and mounting it would silently start an empty one.
+      - postgres_data_18:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      # -h forces the check over TCP. During first-time initialisation Postgres
+      # accepts unix socket connections while TCP is still closed, so a plain
+      # pg_isready would report healthy and let the backend start too early.
+      test: ["CMD-SHELL", "pg_isready -U postgres -d main_db -h 127.0.0.1"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 10s
 
   backend:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: unless-stopped
     environment:
       DB_HOST: postgres
       DB_USER: postgres
@@ -37,4 +44,4 @@ services:
         condition: service_healthy
 
 volumes:
-  postgres_data:
+  postgres_data_18:

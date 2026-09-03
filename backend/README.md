@@ -30,5 +30,17 @@ running outside Docker:
 | `DB_PASSWORD` | `postgres` |
 | `DB_NAME` | `main_db` |
 
-The server exits on startup if the database is unreachable, so check the compose logs first if
-the container keeps restarting.
+The server exits on startup if the database is unreachable. Both services use
+`restart: unless-stopped`, so the backend retries by itself if it happens to win the race on a
+cold start.
+
+## Database data
+
+The Postgres data lives in the `postgres_data_18` volume. Postgres 18 keeps its cluster in
+`/var/lib/postgresql/18/docker`, so the volume is named per major version: a cluster created by an
+older image is not readable by this one, and reusing the old volume would silently start an empty
+database. To start over, remove the volume:
+
+```bash
+docker compose down -v
+```

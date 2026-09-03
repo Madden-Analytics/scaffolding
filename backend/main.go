@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -22,20 +23,24 @@ func env(key, fallback string) string {
 	return fallback
 }
 
+// dsn builds the Postgres connection string from the environment. It uses net/url
+// so that passwords containing characters like @, / or # are escaped correctly.
+func dsn() string {
+	u := url.URL{
+		Scheme:   "postgres",
+		User:     url.UserPassword(env("DB_USER", "postgres"), env("DB_PASSWORD", "postgres")),
+		Host:     net.JoinHostPort(env("DB_HOST", "localhost"), env("DB_PORT", "5432")),
+		Path:     "/" + env("DB_NAME", "main_db"),
+		RawQuery: "sslmode=disable",
+	}
+	return u.String()
+}
+
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
 
-	dsn := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		env("DB_USER", "postgres"),
-		env("DB_PASSWORD", "postgres"),
-		env("DB_HOST", "localhost"),
-		env("DB_PORT", "5432"),
-		env("DB_NAME", "main_db"),
-	)
-
 	ctx := context.Background()
-	pool, err := pgxpool.New(ctx, dsn)
+	pool, err := pgxpool.New(ctx, dsn())
 	if err != nil {
 		log.Fatal().Err(err).Msg("could not create the database pool")
 	}
