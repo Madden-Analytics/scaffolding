@@ -21,10 +21,10 @@ func main() {
 
 	ctx := context.Background()
 	pool, err := pgxpool.New(ctx, dsn())
+	defer pool.Close()
 	if err != nil {
 		log.Fatal().Err(err).Msg("could not create the database pool")
 	}
-	defer pool.Close()
 
 	startupCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
@@ -51,15 +51,15 @@ func main() {
 		pingCtx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
 		defer cancel()
 
-		status, code := "ok", http.StatusOK
+		code := http.StatusOK
 		if err := pool.Ping(pingCtx); err != nil {
 			log.Error().Err(err).Msg("health check failed")
-			status, code = "unavailable", http.StatusServiceUnavailable
+			code = http.StatusServiceUnavailable
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(code)
-		json.NewEncoder(w).Encode(map[string]string{"status": status})
+		json.NewEncoder(w).Encode(map[string]string{"status": http.StatusText(code)})
 	})
 
 	log.Info().Msg("server starting on port 8080")
@@ -68,9 +68,9 @@ func main() {
 	}
 }
 
-// env returns the value of the environment variable, or fallback when it is unset or empty.
+// env returns the value of the environment variable, or fallback when it is unset.
 func env(key, fallback string) string {
-	if value := os.Getenv(key); value != "" {
+	if value, ok := os.LookupEnv(key); ok {
 		return value
 	}
 	return fallback

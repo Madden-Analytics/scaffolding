@@ -27,7 +27,7 @@ const res = await fetch('http://localhost:8080/health')
 ```
 
 With `docker compose up` running in `/backend`, `curl http://localhost:8080/health` should return
-`{"status":"ok"}`.
+`{"status":"OK"}`.
 
 ## Tooling notes
 

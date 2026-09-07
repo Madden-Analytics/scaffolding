@@ -14,8 +14,8 @@ and make sure you see the "Server running OK" message.
 ## Endpoints
 
 - `GET /` — plain-text liveness message, "Server running OK"
-- `GET /health` — pings the database and returns `{"status":"ok"}`, or a 503 with
-  `{"status":"unavailable"}` when the database cannot be reached
+- `GET /health` — pings the database and returns `{"status":"OK"}`, or a 503 with
+  `{"status":"Service Unavailable"}` when the database cannot be reached
 
 The server sends CORS headers for `CORS_ORIGIN` (the frontend dev server by default), so the
 frontend can call these endpoints directly from the browser. `CORS_ORIGIN` is a single origin,

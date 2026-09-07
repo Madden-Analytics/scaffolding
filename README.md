@@ -34,7 +34,7 @@ end-to-end smoke test once both sides are running:
 
 ```bash
 curl http://localhost:8080/health
-# {"status":"ok"}
+# {"status":"OK"}
 ```
 
 See `backend/README.md` and `frontend/README.md` for details on each side.
